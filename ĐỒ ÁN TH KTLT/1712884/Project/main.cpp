@@ -28,11 +28,13 @@ int HEIGH_CONSOLE = 20, WIDTH_CONSOLE = 80;  //Độ rộng và độ cao của 
 bool STATE;  //Trạng thái sống/chết của người qua đường
 unsigned long times = 0;  //Thời gian chơi Game
 int Level = 0;  //Đại diện cấp bậc  người chơi
-char Ambulance[2][5];  //Mảng chứa các ký tự ghép thành xe cứu thương
+char Ambulance[3][8];  //Mảng chứa các ký tự ghép thành xe cứu thương
 int PauseTimes;  //Thời gian tạm dừng xe
 int ColorCar;  //Tô màu cho xe
 int ColorBoard;  //Tô màu cho viền bảng
 int ColorPerson;  //Tô màu cho nhân vật
+int DANHDAUVITRIY[79] = { NULL };  //Đánh dấu vị trí người chơi đến đích
+bool KT;  //Kiểm tra load Game
 
 /*Cố định kích thước màn hình Console*/
 void FixConsoleWindow()
@@ -75,7 +77,7 @@ void ResetData()
 {
 	MOVING = 'D';  //Ban đầu cho người di chuyển sang phải
 	SPEED = 1;  //Tốc độ lúc đầu
-	Y = { 18,19 };  //Vị trí lúc đầu của người
+	Y = { 40,19 };  //Vị trí lúc đầu của người
 	//Tạo mảng xe chạy
 	if (X == NULL)
 	{
@@ -123,16 +125,25 @@ void DrawBoard(int x, int y, int width, int height, int ColorBoard, int curPosX 
 /*Vẽ xe cứu thương*/
 void DrawAmbulance()
 {
-	Ambulance[0][0] = (char)(232);
+	Ambulance[0][0] = (char)(218);
 	Ambulance[0][1] = (char)(196);
 	Ambulance[0][2] = (char)(196);
 	Ambulance[0][3] = (char)(196);
-	Ambulance[0][4] = (char)(92);
-	Ambulance[1][0] = (char)(192);
-	Ambulance[1][1] = (char)(233);
-	Ambulance[1][2] = (char)(196);
-	Ambulance[1][3] = (char)(233);
-	Ambulance[1][4] = (char)(217);
+	Ambulance[0][4] = (char)(196);
+	Ambulance[0][5] = (char)(191);
+	Ambulance[1][0] = (char)(179);
+	Ambulance[1][2] = (char)(43);
+	Ambulance[1][4] = (char)(179);
+	Ambulance[1][6] = (char)(92);
+	Ambulance[1][7] = (char)(95);
+	Ambulance[2][0] = (char)(192);
+	Ambulance[2][1] = (char)(233);
+	Ambulance[2][2] = (char)(196);
+	Ambulance[2][3] = (char)(196);
+	Ambulance[2][4] = (char)(193);
+	Ambulance[2][5] = (char)(196);
+	Ambulance[2][6] = (char)(233);
+	Ambulance[2][7] = (char)(217);
 }
 
 /*Xây dựng hàm StartGame*/
@@ -180,7 +191,7 @@ void ProcessDead()
 void ProcessFinish(POINT &p)
 {
 	SPEED == MAX_SPEED ? SPEED = 1 : SPEED++;
-	p = { 18,19 };  //Vị trí lúc ban đầu của người
+	p = { 40,19 };  //Vị trí lúc ban đầu của người
 	MOVING = 'D';  //Ban đầu cho người di chuyển sang phải
 }
 
@@ -218,6 +229,7 @@ void XuLyVaChamY_Y(POINT Y, int *VT)
 void DrawLetterBack()
 {
 	char GIAODIEN[2][4] = { NULL };
+
 
 	GIAODIEN[0][0] = char(47);
 	GIAODIEN[0][1] = char(205);
@@ -376,34 +388,36 @@ void MoveCars(int& PauseTimes)
 /*Hàm xử lý di chuyển của xe cứu thương*/
 void MoveAmbulance(POINT p, int x, int y)
 {
-	for (int k = 1; k < WIDTH_CONSOLE - 5; k++)
+	for (int k = 1; k < WIDTH_CONSOLE - 8; k++)
 	{
-		GotoXY(k, p.y);
-		for (int i = 0; i < 5; i++)
+		GotoXY(k, p.y - 1);
+		for (int i = 0; i < 3; i++)
 		{
-			for (int j = 0; j < 5; j++)
+			for (int j = 0; j < 8; j++)
 			{
 				cout << Ambulance[i][j];
 			}
-			GotoXY(k, p.y + 1);
-			Sleep(30);
+			GotoXY(k, p.y + i);
 		}
-		if (k == x - 6)
+		Sleep(120);
+		if (k == x - 8)
 		{
 			GotoXY(k, p.y - 2);
+			TextColor(5);
 			printf_s("Help me.!!");
+			TextColor(15);
 			Sleep(1000);
 			GotoXY(k, p.y - 2);
 			printf_s("          ");
 		}
-			GotoXY(k, p.y);
-		for (int i = 0; i < 5; i++)
+		GotoXY(k, p.y - 1);
+		for (int i = 0; i < 3; i++)
 		{
-			for (int j = 0; j < 5; j++)
+			for (int j = 0; j < 8; j++)
 			{
 				cout << " ";
 			}
-			GotoXY(k, p.y + 1);
+			GotoXY(k, p.y + +i);
 		}
 	}
 }
@@ -475,7 +489,7 @@ void MoveUp()  //Di chuyển lên
 	}
 }
 
-/*Hàm xử lý về thoiè gian chơi Game*/
+/*Hàm xử lý về thời gian chơi Game*/
 void SaveTimes()
 {
 	while (1)
@@ -497,6 +511,10 @@ void HieuUng(POINT p)
 	KeyPress();
 	GotoXY(p.x, p.y);
 	cout << "X";
+	GotoXY(35, 10);
+	TextColor(10);
+	printf("You die");
+	TextColor(15);
 	//const wchar_t Sound[14] = L"ambulance.wav";
 	STATE = 0;
 	PlaySound("ambulance1.wav", NULL, SND_FILENAME);
@@ -509,7 +527,7 @@ void SubThread()
 {
 	GotoXY(90, 1);
 	printf_s("%d", Level);
-	int DANHDAUVITRIY[81] = { NULL };
+	//int DANHDAUVITRIY[81] = { NULL };
 	int PauseTimes = 0;
 	while (1)
 	{
@@ -539,8 +557,9 @@ void SubThread()
 			KeyPress();
 			if (IsImpact(Y, Y.y))
 			{
+				PlaySound("smb_mariodie.wav", NULL, SND_FILENAME);
 				int i = 0;
-				while (i < WIDTH_CONSOLE + 1)
+				while (i < WIDTH_CONSOLE)
 				{
 					if (*(DANHDAUVITRIY + i) == 1)
 					{
@@ -555,6 +574,28 @@ void SubThread()
 			XuLyVaChamY_Y(Y, DANHDAUVITRIY);
 			if (Y.y == 1)
 			{
+				//PauseGame(t1.native_handle());
+				//PauseGame(t2.native_handle());
+				if (STATE == true)
+				{
+					PlaySound("smb_1-up.wav", NULL, SND_FILENAME);
+					GotoXY(35, 10);
+					TextColor(10);
+					printf("Level up");
+					TextColor(15);
+					Sleep(1500);
+					GotoXY(35, 10);
+					printf("        ");
+				}
+				else
+				{
+					PlaySound("smb_1-up.wav", NULL, SND_FILENAME);
+					GotoXY(35, 10);
+					TextColor(10);
+					printf("Collide");
+					TextColor(10);
+					Sleep(1500);
+				}
 				ProcessFinish(Y);  //Kiểm tra xem về đích chưa
 			}
 			Sleep(150);  //Hàm ngủ theo tốc độ SPEED
@@ -575,6 +616,13 @@ void Nocursortype()
 void SaveInformation(fstream &fs)
 {
 	fs.seekg(0);
+	for (int i = 0; i < 79; i++)
+	{
+		fs << *(DANHDAUVITRIY + i) << "   ";
+	}
+	fs << endl;
+	fs << Y.x << endl;
+	fs << Y.y << endl;
 	fs << Level << endl;
 	fs << SPEED << endl;
 	fs << times << endl;
@@ -619,6 +667,15 @@ void GetInformation(fstream& fs, char *FileName)
 		return;
 	}
 	fs.seekg(0);
+	for (int i = 0; i < 79; i++)
+	{
+		fs >> Information;
+		*(DANHDAUVITRIY + i) = Information;
+	}
+	fs >> Information;
+	Y.x = Information;
+	fs >> Information;
+	Y.y = Information;
 	fs >> Information;
 	Level = Information;
 	fs >> Information;
@@ -1046,6 +1103,35 @@ void DrawInformationStudent(int &Choose)
 	cout << "LECTURER: TRUONG TOAN THINH";
 	BackgroundMusic();
 	cin >> Choose;
+	if (Choose == 1)
+	{
+		GotoXY(15, 7);
+		TextColor(10);
+		printf("<1>_NEW GAME");
+		TextColor(15);
+	}
+	else if (Choose == 2)
+	{
+		GotoXY(15, 9);
+		TextColor(10);
+		printf("<2>_LOAD GAME");
+		TextColor(15);
+	}
+	else if (Choose == 3)
+	{
+		GotoXY(15, 11);
+		TextColor(10);
+		cout << "<3>_SETTINGS";
+		TextColor(15);
+	}
+	else if (Choose == 4)
+	{
+		GotoXY(15, 13);
+		TextColor(10);
+		cout << "<4>_EXIT GAME";
+		TextColor(15);
+	}
+	Sleep(500);
 	if (Choose != NULL)
 	{
 		PlaySound(NULL, NULL, SND_PURGE);
@@ -1115,6 +1201,27 @@ void DrawLetterReturn()
 	printf("RETURN (PRESS R)");
 
 }
+
+/*Hàm in vị trí người chơi đã đến đích*/
+void DrawPlayer()
+{
+	GotoXY(1, 1);
+	TextColor(ColorPerson);
+	for (int i = 0; i < WIDTH_CONSOLE - 1; i++)
+	{
+		if (*(DANHDAUVITRIY + i + 1) == 1)
+		{
+			printf("Y");
+		}
+		else
+		{
+			printf(" ");
+		}
+	}
+	TextColor(15);
+}
+
+
 void main()
 {
 	int Choose;
@@ -1151,23 +1258,30 @@ void main()
 					}
 					else if (temp == 'P')
 					{
+						PlaySound("smb_pause.wav", NULL, SND_FILENAME);
 						PauseGame(t1.native_handle());
 						PauseGame(t2.native_handle());
 					}
 					else if (temp == 'L')
 					{
+						PlaySound("smb_pause.wav", NULL, SND_FILENAME);
 						PauseGame(t1.native_handle());
 						PauseGame(t2.native_handle());
 						SaveGame(fs, FileName);
 					}
 					else if (temp == 'T')
 					{
+						PlaySound("smb_pause.wav", NULL, SND_FILENAME);
 						PauseGame(t1.native_handle());
 						PauseGame(t2.native_handle());
 						GetInformation(fs, FileName);
+						/*_getch();*/
+						DrawPlayer();
+						continue;
 					}
 					else if (temp == 'R')
 					{
+						PlaySound("smb_pause.wav", NULL, SND_FILENAME);
 						/*ExitGame(t2.native_handle());*/
 						PauseGame(t1.native_handle());
 						PauseGame(t2.native_handle());
@@ -1185,11 +1299,11 @@ void main()
 						GotoXY(18, 8);
 						cin >> ColorPerson;
 						char press;
-						cin >> press;
+						press = toupper(_getch());
 						if (press == 'r' || press == 'R')
 						{
-							system("cls");
 							StartGame();
+							DrawPlayer();
 							continue;
 						}
 					/*	_getch();*/
@@ -1224,6 +1338,8 @@ void main()
 		else if (Choose == 2)
 		{
 			GetInformation(fs, FileName);
+		/*	KT = true;*/
+			/*DrawPlayer();*/
 			Choose = 1; continue;
 		}
 		else if (Choose == 3)
@@ -1253,4 +1369,5 @@ void main()
 			return;
 		}
 	}
+	PlaySound("smb_gameover.wav", NULL, SND_FILENAME);
 }

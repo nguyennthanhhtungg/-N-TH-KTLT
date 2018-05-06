@@ -1,4 +1,4 @@
 ﻿  main.cpp
-c:\users\dell\desktop\đồ án th ktlt\1712884\project\main.cpp(1119): warning C4326: return type of 'main' should be 'int' instead of 'void'
-c:\users\dell\desktop\đồ án th ktlt\1712884\project\main.cpp(1137): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\dell\desktop\đồ án th ktlt\1712884\project\main.cpp(1226): warning C4326: return type of 'main' should be 'int' instead of 'void'
+c:\users\dell\desktop\đồ án th ktlt\1712884\project\main.cpp(1244): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   Project.vcxproj -> C:\Users\Dell\Desktop\ĐỒ ÁN TH KTLT\1712884\Debug\Project.exe
