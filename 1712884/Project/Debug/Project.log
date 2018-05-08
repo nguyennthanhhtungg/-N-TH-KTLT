@@ -1,0 +1,6 @@
+﻿  main.cpp
+c:\users\dell\documents\visual studio 2015\projects\1712884\project\main.cpp(3): warning C4005: 'UNICODE': macro redefinition
+  c:\users\dell\documents\visual studio 2015\projects\1712884\project\main.cpp(3): note: command-line arguments:  see previous definition of 'UNICODE'
+c:\users\dell\documents\visual studio 2015\projects\1712884\project\main.cpp(1250): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Project.vcxproj -> C:\Users\Dell\Documents\Visual Studio 2015\Projects\1712884\Debug\Project.exe
+  Project.vcxproj -> C:\Users\Dell\Documents\Visual Studio 2015\Projects\1712884\Debug\Project.pdb (Full PDB)

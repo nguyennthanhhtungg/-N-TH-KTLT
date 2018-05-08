@@ -34,7 +34,10 @@ int ColorCar;  //Tô màu cho xe
 int ColorBoard;  //Tô màu cho viền bảng
 int ColorPerson;  //Tô màu cho nhân vật
 int DANHDAUVITRIY[79] = { NULL };  //Đánh dấu vị trí người chơi đến đích
-bool KT;  //Kiểm tra load Game
+//bool KT;  //Kiểm tra load Game
+int Speed;  //Tốc độ hờ
+int LEVEL;  //Level hờ
+int x, y;  //Vị trí người hờ
 
 /*Cố định kích thước màn hình Console*/
 void FixConsoleWindow()
@@ -315,7 +318,7 @@ void DrawCars(const char* s,int ColorCar)
 }
 
 /*Hàm vẽ người qua đường*/
-void DrawSticker(const POINT& p,const char* s,int ColorPerson)
+void DrawSticker(const POINT& p, const char* s, int ColorPerson)
 {
 	if (ColorPerson != NULL)
 	{
@@ -1209,13 +1212,15 @@ void DrawPlayer()
 	TextColor(ColorPerson);
 	for (int i = 0; i < WIDTH_CONSOLE - 1; i++)
 	{
+		
 		if (*(DANHDAUVITRIY + i + 1) == 1)
 		{
+			GotoXY(i + 1, 1);
 			printf("Y");
 		}
 		else
 		{
-			printf(" ");
+			continue;
 		}
 	}
 	TextColor(15);
@@ -1225,6 +1230,7 @@ void DrawPlayer()
 void main()
 {
 	int Choose;
+	int KT = 0;
 	fstream fs;
 	int temp;
 	char FileName[31];
@@ -1245,6 +1251,15 @@ void main()
 			StartGame();
 			thread t1(SaveTimes);
 			thread t2(SubThread);
+			if (KT == 1)
+			{
+				SPEED = Speed;
+				Level = LEVEL;
+				Y.x = x;
+				Y.y = y;
+				DrawPlayer();
+				KT = 0;
+			}
 			while (1)
 			{
 				temp = toupper(_getch());
@@ -1275,8 +1290,16 @@ void main()
 						PauseGame(t1.native_handle());
 						PauseGame(t2.native_handle());
 						GetInformation(fs, FileName);
-						/*_getch();*/
+						system("cls");
+						DrawBoard(0, 0, WIDTH_CONSOLE, HEIGH_CONSOLE, 0, 0);
 						DrawPlayer();
+						/*system("cls");*/
+						system("cls");
+						DrawBoard(0, 0, WIDTH_CONSOLE, HEIGH_CONSOLE, 0, 0);
+						GotoXY(40, 19);
+						printf(" ");	
+						DrawPlayer();
+						/*_getch();*/
 						continue;
 					}
 					else if (temp == 'R')
@@ -1300,9 +1323,11 @@ void main()
 						cin >> ColorPerson;
 						char press;
 						press = toupper(_getch());
-						if (press == 'r' || press == 'R')
+						if (press == 'R')
 						{
-							StartGame();
+							/*StartGame();*/
+							system("cls");
+							DrawBoard(0, 0, WIDTH_CONSOLE, HEIGH_CONSOLE,0,0);
 							DrawPlayer();
 							continue;
 						}
@@ -1338,7 +1363,11 @@ void main()
 		else if (Choose == 2)
 		{
 			GetInformation(fs, FileName);
-		/*	KT = true;*/
+			Speed = SPEED;
+			LEVEL = Level;
+			x = Y.x;
+			y = Y.y;
+			KT = 1;
 			/*DrawPlayer();*/
 			Choose = 1; continue;
 		}
